@@ -23,7 +23,7 @@ pipeline {
         stage('Read File') {
             steps {
                 echo '📖 Reading demo.html.txt...'
-                sh 'cat demo.html.txt || echo "demo.html.txt not found"'
+                sh 'cat demo.html || echo "demo.html not found"'
             }
         }
 
