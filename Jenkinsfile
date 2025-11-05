@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "hemanthr2002/demo-html-app"  // ✅ your actual Docker Hub repo
+    }
+
     stages {
 
         stage('Clone from GitHub') {
@@ -27,40 +31,35 @@ pipeline {
             }
         }
 
-        stage('Simulate Build') {
-            steps {
-                echo '⚙️ Simulating a build step...'
-                sh 'echo "Build step completed successfully ✅"'
-            }
-        }
-
-        stage('Test Step') {
-            steps {
-                echo '🧪 Running test step...'
-                sh 'echo "All tests passed ✅"'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image...'
-                sh 'docker build -t demo-html-app .'
+                sh 'docker build -t ${IMAGE_NAME}:latest .'
             }
         }
 
         stage('Run Container') {
             steps {
                 echo '🚀 Running container on port 8081...'
-                // Stop and remove any old container before running
                 sh 'docker rm -f demo-html-app || true'
-                sh 'docker run -d -p 8081:80 --name demo-html-app demo-html-app'
+                sh 'docker run -d -p 8081:80 --name demo-html-app ${IMAGE_NAME}:latest'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                echo '📦 Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                    sh 'docker push ${IMAGE_NAME}:latest'
+                }
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '✅ Pipeline completed successfully and image pushed to Docker Hub!'
         }
         failure {
             echo '❌ Pipeline failed — check console output.'
