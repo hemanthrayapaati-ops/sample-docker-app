@@ -7,7 +7,8 @@ pipeline {
                 echo '📥 Cloning repository from GitHub...'
                 git branch: 'main',
                     credentialsId: 'github-creds',
-                    url: 'https://github.com/hemanthr2002/sample-docker-app.git'
+                    url: 'https://github.com/hemanthrayapaati-ops/sample-docker-app.git'
+
             }
         }
 
