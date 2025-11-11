@@ -4,13 +4,11 @@ pipeline {
     environment {
         IMAGE_NAME = "hemanthr2002/demo-html-app"  // ✅ your actual Docker Hub repo
     }
-
-    stages {
-
-        stage('Clone from GitHub') {
+stages {
+        stage('Clone Repository') {
             steps {
-                echo '📥 Cloning repository from GitHub...'
-                git branch: 'main',
+                echo "📥 Cloning ${env.BRANCH_NAME} branch from GitHub..."
+                git branch: "${env.BRANCH_NAME}",
                     credentialsId: 'github-creds',
                     url: 'https://github.com/hemanthrayapaati-ops/sample-docker-app.git'
             }
@@ -18,12 +16,11 @@ pipeline {
 
         stage('Check Workspace') {
             steps {
-                echo '📂 Checking project folder...'
+                echo '📂 Checking workspace contents...'
                 sh 'pwd'
                 sh 'ls -l'
             }
         }
-
         stage('Read File') {
             steps {
                 echo '📖 Reading demo.html...'
